@@ -14,14 +14,17 @@ function App() {
   const fixLinks = () => {
     const urlList = urls.split('\n').filter(Boolean);
   
+    if (urlList.length > 10) {
+      alert('⚡ Bulk mode is locked. Please unlock unlimited links first.');
+      return;
+    }
+  
     const fixed = urlList.map(url => {
       const separator = url.includes('?') ? '&' : '?';
       let newUrl = url + separator +
         `utm_source=${encodeURIComponent(utm.source)}&utm_medium=${encodeURIComponent(utm.medium)}&utm_campaign=${encodeURIComponent(utm.campaign)}`;
-  
       if (utm.term) newUrl += `&utm_term=${encodeURIComponent(utm.term)}`;
       if (utm.content) newUrl += `&utm_content=${encodeURIComponent(utm.content)}`;
-  
       return newUrl;
     });
   
@@ -49,7 +52,30 @@ function App() {
         onChange={(e) => setUrls(e.target.value)}
       />
 
-<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
+      {urls.split('\n').filter(Boolean).length > 10 && (
+        <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#ffe0e0', border: '1px solid red', borderRadius: '5px' }}>
+          <p><strong>⚡ Bulk mode locked!</strong> You can only fix up to 10 links at once for free.</p>
+          <p>Unlock unlimited bulk link fixing below:</p>
+          <a
+            href="https://buy.stripe.com/4gw5kQ7Pr5vUaYg5kk"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-block',
+              marginTop: '0.5rem',
+              padding: '0.5rem 1rem',
+              backgroundColor: '#ff4d4f',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '5px'
+            }}
+          >
+            Unlock Bulk Mode for $10
+          </a>
+        </div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
         <input
           type="text"
           placeholder="utm_source"
@@ -89,14 +115,16 @@ function App() {
 
       <button
         onClick={fixLinks}
+        disabled={urls.split('\n').filter(Boolean).length > 10}
         style={{
           padding: '0.75rem 1.5rem',
-          backgroundColor: '#007bff',
+          backgroundColor: urls.split('\n').filter(Boolean).length > 10 ? '#ccc' : '#007bff',
           color: 'white',
           border: 'none',
           borderRadius: '5px',
           fontSize: '1rem',
-          cursor: 'pointer'
+          cursor: urls.split('\n').filter(Boolean).length > 10 ? 'not-allowed' : 'pointer',
+          opacity: urls.split('\n').filter(Boolean).length > 10 ? 0.6 : 1
         }}
       >
         Fix Links
@@ -128,6 +156,7 @@ function App() {
           />
         </div>
       )}
+
     </div>
   );
 }
